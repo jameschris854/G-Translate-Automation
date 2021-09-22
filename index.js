@@ -14,8 +14,8 @@ const screen = {
  
 
 app.get('/translate',async (req,res,next) => {
-    let languages = ['tamil','odia']
-    const input =[['testLabel','test'],['workLabel','work']]
+    let languages = ['tamil','Gujarati','BENGALI','hindi','Kannada','Arabic','Malayalam','Marathi','Telugu','Odia']
+    const input =[['salesIqFailMessage','Problem in reaching Support. Please contact shop owner!']]
     const output =  []
     input.map((el) => output.push([el[0],'']))
     let finalOutput = []
@@ -25,9 +25,8 @@ app.get('/translate',async (req,res,next) => {
     var finalstr = ''
     let driver = await new Builder()
     .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options().headless().windowSize(screen)).withCapabilities(webdriver.Capabilities.chrome())
-//  .setChromeOptions(new chrome.Options().windowSize(screen)).withCapabilities(webdriver.Capabilities.chrome())
-    .build()
+//    .setChromeOptions(new chrome.Options().headless().windowSize(screen)).withCapabilities(webdriver.Capabilities.chrome()).build()
+      .setChromeOptions(new chrome.Options().windowSize(screen)).withCapabilities(webdriver.Capabilities.chrome()).build()
     try {
         // translate one label at a time 
         const translateLabel = async (language) => {
@@ -40,6 +39,7 @@ app.get('/translate',async (req,res,next) => {
                 await whatElement.click()
                 await driver.sleep(1000)
             var translatedText = await driver.findElement(tr).getText()
+            console.log(translatedText);
             finalOutput.push(`${input[j][0]}:'${translatedText}'`)
             if(j >= input.length-1){
                 console.log('completed languages',languages[i]);
@@ -58,7 +58,7 @@ app.get('/translate',async (req,res,next) => {
             if(i > languages.length-1) {
                let res = []
                 finalstr = ''
-               finalOutput.map((el) => finalstr = finalstr + el +', '  )
+               finalOutput.map((el) => finalstr = finalstr +'<div>'+ el+','+'</div>'  )
                console.log(finalstr);
                response.send(finalstr)
                await driver.quit();
@@ -70,12 +70,11 @@ app.get('/translate',async (req,res,next) => {
 
         // init
             var el = By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[3]/c-wiz/div[2]/div/div[4]/div/div[1]/div[2]/span")
-            var tr = By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[2]/div[2]/c-wiz[2]/div[5]/div/div[1]/span[1]/span/span")
+            var tr = By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[2]/div[2]/c-wiz[2]/div[5]/div/div[1]/span[1]")
             await driver.get('https://translate.google.co.in/');
             await driver.manage().window().maximize().then(() => {
                 getlanguages()
             })
-            console.log(finalstr);
             return finalstr
         
     } finally {
