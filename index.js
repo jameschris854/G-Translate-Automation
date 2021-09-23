@@ -14,8 +14,15 @@ const screen = {
  
 
 app.get('/translate',async (req,res,next) => {
+
+    // **********************************   add or remove languages here  **************************************** //
     let languages = ['tamil','Gujarati','BENGALI','hindi','Kannada','Arabic','Malayalam','Marathi','Telugu','Odia']
+
+    // ***********************************  add [label,text] pairs on ths input list to be translated ****************** //
+
     const input =[['salesIqFailMessage','Problem in reaching Support. Please contact shop owner!']]
+
+    ////////////////////////////////////////////////////////////// selenium js ////////////////////////////////////////////////////////////////
     const output =  []
     input.map((el) => output.push([el[0],'']))
     let finalOutput = []
@@ -30,27 +37,30 @@ app.get('/translate',async (req,res,next) => {
     try {
         // translate one label at a time 
         const translateLabel = async (language) => {
-                (i < 1 && j < 1 )? null : await driver.findElement(By.xpath('/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[2]/div[2]/c-wiz[1]/div[1]/div/div[1]/span/button/i')).click()
-                await driver.findElement(By.className('er8xn')).sendKeys(input[j][1], Key.RETURN)
-                await driver.findElement(By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[1]/c-wiz/div[5]/button/span")).click()
-                await driver.findElement(By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[3]/c-wiz/div[2]/div/div[2]/input")).sendKeys(language, Key.RETURN)
-                await driver.sleep(1000)
-                const whatElement = driver.findElement(el);
-                await whatElement.click()
-                await driver.sleep(1000)
-            var translatedText = await driver.findElement(tr).getText()
-            console.log(translatedText);
-            finalOutput.push(`${input[j][0]}:'${translatedText}'`)
-            if(j >= input.length-1){
-                console.log('completed languages',languages[i]);
-                j = 0
-                i++
-                getlanguages(res)
-            }else{
-                j++
-                translateLabel(languages[i])
+            try {
+                    (i < 1 && j < 1 )? null : await driver.findElement(By.className('er8xn')).clear()
+                    await driver.findElement(By.className('er8xn')).sendKeys(input[j][1], Key.RETURN)
+                    await driver.findElement(By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[1]/c-wiz/div[5]/button/span")).click()
+                    await driver.findElement(By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[3]/c-wiz/div[2]/div/div[2]/input")).sendKeys(language, Key.RETURN)
+                    await driver.sleep(1000)
+                    const whatElement = driver.findElement(el);
+                    await whatElement.click()
+                    await driver.sleep(1000)
+                var translatedText = await driver.findElement(tr).getText()
+                console.log(translatedText);
+                finalOutput.push(`${input[j][0]}:'${translatedText}'`)
+                if(j >= input.length-1){
+                    console.log('completed languages',languages[i]);
+                    j = 0
+                    i++
+                    getlanguages(res)
+                }else{
+                    j++
+                    translateLabel(languages[i])
+                }
+            } catch (error) {
+                console.log(error);
             }
-
          }
 
         // handle language one by one 
@@ -77,7 +87,10 @@ app.get('/translate',async (req,res,next) => {
             })
             return finalstr
         
-    } finally {
+    }catch(e){
+        console.log(e);
+    }
+     finally {
     }
 })
 
