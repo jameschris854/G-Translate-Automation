@@ -16,7 +16,7 @@ const screen = {
 app.get('/translate',async (req,res,next) => {
 
     // **********************************   add or remove languages here  **************************************** //
-    let languages = ['tamil','Gujarati','BENGALI','hindi','Kannada','Arabic','Malayalam','Marathi','Telugu','Odia']
+    let languages = ['tamil','Gujarati','bengali','hindi','Kannada','Arabic','Malayalam','Marathi','Telugu','Odia']
 
     // ***********************************  add [label,text] pairs on ths input list to be translated ****************** //
 
