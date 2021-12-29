@@ -32,18 +32,19 @@ app.get('/translate',async (req,res,next) => {
     var finalstr = ''
     let driver = await new Builder()
     .forBrowser('chrome')
-//    .setChromeOptions(new chrome.Options().headless().windowSize(screen)).withCapabilities(webdriver.Capabilities.chrome()).build()
+    // .setChromeOptions(new chrome.Options().headless().windowSize(screen)).withCapabilities(webdriver.Capabilities.chrome()).build()
       .setChromeOptions(new chrome.Options().windowSize(screen)).withCapabilities(webdriver.Capabilities.chrome()).build()
     try {
         // translate one label at a time 
         const translateLabel = async (language) => {
             try {
                     (i < 1 && j < 1 )? null : await driver.findElement(By.className('er8xn')).clear()
-                    await driver.findElement(By.className('er8xn')).sendKeys(input[j][1], Key.RETURN)
-                    await driver.findElement(By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[1]/c-wiz/div[5]/button/span")).click()
-                    await driver.findElement(By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[3]/c-wiz/div[2]/div/div[2]/input")).sendKeys(language, Key.RETURN)
+                    await driver.findElement(By.className('er8xn')).sendKeys(input[j][1], Key.RETURN) // enter text for translation
+                    await driver.findElement(By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[1]/c-wiz/div[1]/c-wiz/div[5]/button/div[2]")).click() // click dropdown for language
+                    await driver.findElement(By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[1]/c-wiz/div[2]/c-wiz/div[2]/div/div[2]/input")).sendKeys(language, Key.RETURN) // send language text in language searchbox
                     await driver.sleep(1000)
                     const whatElement = driver.findElement(el);
+                    await driver.sleep(1000)
                     await whatElement.click()
                     await driver.sleep(1000)
                 var translatedText = await driver.findElement(tr).getText()
@@ -79,8 +80,8 @@ app.get('/translate',async (req,res,next) => {
         }
 
         // init
-            var el = By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[3]/c-wiz/div[2]/div/div[4]/div/div[1]/div[2]/span")
-            var tr = By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[2]/div[2]/c-wiz[2]/div[5]/div/div[1]/span[1]")
+            var el = By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[1]/c-wiz/div[2]/c-wiz/div[2]/div/div[4]/div/div[1]") // select language element from search element
+            var tr = By.xpath("/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[2]/div[3]/c-wiz[2]/div[6]/div/div[1]") // translated input box
             await driver.get('https://translate.google.co.in/');
             await driver.manage().window().maximize().then(() => {
                 getlanguages()
